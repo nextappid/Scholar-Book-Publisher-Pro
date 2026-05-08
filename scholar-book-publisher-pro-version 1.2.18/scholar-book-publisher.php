@@ -193,26 +193,31 @@ final class Scholar_Book_Publisher {
             'paged'          => $paged,
         );
         
+        // Track our own posts_where filter so we can remove ONLY ours after the query.
+        // Using remove_all_filters() would nuke every other plugin's WHERE filter.
+        $sbp_author_search_filter = null;
+
         // Search filter - title or author (custom implementation via meta_query)
         if (!empty($search)) {
             // WordPress 's' only searches title/content, not custom meta.
-            // We'll use title search + custom filter for authors
+            // We use title search + a targeted posts_where addition for authors.
             $args['s'] = $search;  // This searches title
             
-            // Hook to also search authors meta (via posts_where filter below)
-            add_filter('posts_where', function($where) use ($search) {
+            // Named closure stored in a variable so we can remove ONLY this filter later.
+            $sbp_author_search_filter = function( $where ) use ( $search ) {
                 global $wpdb;
                 // Add OR condition to search in authors meta
-                $search_safe = $wpdb->esc_like($search);
+                $search_safe = $wpdb->esc_like( $search );
                 $where .= " OR (
                     {$wpdb->posts}.ID IN (
-                        SELECT post_id FROM {$wpdb->postmeta} 
-                        WHERE meta_key = '_sbp_authors' 
+                        SELECT post_id FROM {$wpdb->postmeta}
+                        WHERE meta_key = '_sbp_authors'
                         AND meta_value LIKE '%{$search_safe}%'
                     )
                 )";
                 return $where;
-            }, 10, 1);
+            };
+            add_filter( 'posts_where', $sbp_author_search_filter, 10, 1 );
         }
         
         // Category filter
@@ -258,10 +263,13 @@ final class Scholar_Book_Publisher {
             $args['meta_query']['relation'] = 'AND';
         }
         
-        $query = new WP_Query($args);
-        
-        // Remove the posts_where filter after query
-        remove_all_filters('posts_where');
+        $query = new WP_Query( $args );
+
+        // Remove ONLY our own posts_where filter — never use remove_all_filters() here
+        // because it would destroy WHERE filters added by other plugins (e.g. WPML, WooCommerce).
+        if ( $sbp_author_search_filter !== null ) {
+            remove_filter( 'posts_where', $sbp_author_search_filter, 10 );
+        }
         
         ob_start();
         
@@ -380,16 +388,20 @@ final class Scholar_Book_Publisher {
      * Init Scholar Book Publisher when WordPress Initialises
      */
     public function init() {
-        // Initialize classes
-        new SBP_Post_Types();
-        new SBP_Metadata_Generator();
-        new SBP_Crawler_Optimizer();
-        new SBP_Admin_Notices();
-        new SBP_Usage_Metrics();
-        new SBP_Sitemap_Generator();
-        
+        // Guard each class before instantiating — a missing/corrupt include
+        // would otherwise cause a Fatal Error on every page load.
+        if ( class_exists( 'SBP_Post_Types' ) )          { new SBP_Post_Types(); }
+        if ( class_exists( 'SBP_Metadata_Generator' ) )  { new SBP_Metadata_Generator(); }
+        if ( class_exists( 'SBP_Crawler_Optimizer' ) )   { new SBP_Crawler_Optimizer(); }
+        if ( class_exists( 'SBP_Admin_Notices' ) )        { new SBP_Admin_Notices(); }
+        if ( class_exists( 'SBP_Usage_Metrics' ) )        { new SBP_Usage_Metrics(); }
+        if ( class_exists( 'SBP_Sitemap_Generator' ) )    { new SBP_Sitemap_Generator(); }
+        // SBP_SEO_Migration: was previously auto-instantiated via a bare file-level call
+        // that has been removed. Instantiate it here so it runs in the correct WP lifecycle.
+        if ( class_exists( 'SBP_SEO_Migration' ) )        { new SBP_SEO_Migration(); }
+
         // Fire action
-        do_action('scholar_book_publisher_init');
+        do_action( 'scholar_book_publisher_init' );
     }
     
     /**
@@ -595,17 +607,28 @@ final class Scholar_Book_Publisher {
 }
 
 /**
- * Main instance of Scholar_Book_Publisher
+ * Main instance of Scholar_Book_Publisher.
+ * Wrapped in function_exists() to prevent Fatal Error on edge-case double-load
+ * (e.g. mu-plugins loading the file twice or a broken cache flushing it).
  *
  * @since 1.0.0
  * @return Scholar_Book_Publisher
  */
-function SBP() {
-    return Scholar_Book_Publisher::instance();
+if ( ! function_exists( 'sbpp_instance' ) ) {
+    function sbpp_instance() {
+        return Scholar_Book_Publisher::instance();
+    }
+}
+
+// Keep the short alias for any templates that may already call SBP().
+if ( ! function_exists( 'SBP' ) ) {
+    function SBP() {
+        return sbpp_instance();
+    }
 }
 
 // Initialize the plugin
-SBP();
+sbpp_instance();
 
 /**
  * Activation Hook

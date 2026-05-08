@@ -404,7 +404,10 @@ class SBP_Metadata_Generator {
         // 7. ADDITIONAL CRAWLER HINTS
         // ============================================
         echo "\n<!-- Additional Crawler Optimization -->\n";
-        echo '<link rel="canonical" href="' . esc_url(get_permalink()) . '">' . "\n";
+        // NOTE: <link rel="canonical"> is intentionally omitted here.
+        // SBP_SEO_Migration::add_canonical_meta() outputs the canonical at wp_head
+        // priority 1 for all book/chapter/archive pages. Outputting it twice would
+        // send conflicting signals to Googlebot and other crawlers.
         if ($pdf_url) {
             echo '<link rel="alternate" type="application/pdf" href="' . esc_url($pdf_url) . '">' . "\n";
         }
@@ -490,5 +493,4 @@ class SBP_Metadata_Generator {
     }
 }
 
-// Initialize
-new SBP_Metadata_Generator();
+// NOTE: Instantiated by Scholar_Book_Publisher::init() — do NOT instantiate here.

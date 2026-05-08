@@ -21,21 +21,29 @@ class SBP_SEO_Migration {
     }
     
     /**
-     * Add canonical meta tags to ensure search engines know the correct URL
+     * Add canonical meta tags to ensure search engines know the correct URL.
+     *
+     * NOTE: get_permalink() without an argument returns false on archive pages
+     * (there is no "current post" in that context). We must use
+     * get_post_type_archive_link() for the archive, and get_permalink() only
+     * for singular book / chapter pages.
      *
      * @since 1.2.0
      */
     public function add_canonical_meta() {
-        if (is_singular('scholar_book') || is_singular('scholar_chapter') || is_post_type_archive('scholar_book')) {
-            // WordPress will automatically use the current URL as canonical
-            // This ensures /books/ URLs are indexed, not /catalogs/
-            
-            // Add hreflang if multilingual
+        if ( is_singular( 'scholar_book' ) || is_singular( 'scholar_chapter' ) ) {
+            // Singular: get_permalink() is reliable here.
             $current_url = get_permalink();
-            if ($current_url) {
-                echo '<!-- Scholar Book Publisher: Canonical URL -->' . "\n";
-                echo '<link rel="canonical" href="' . esc_url($current_url) . '" />' . "\n";
-            }
+        } elseif ( is_post_type_archive( 'scholar_book' ) ) {
+            // Archive: get_permalink() returns false — use the archive link instead.
+            $current_url = get_post_type_archive_link( 'scholar_book' );
+        } else {
+            return; // Not a page we manage.
+        }
+
+        if ( $current_url ) {
+            echo '<!-- Scholar Book Publisher: Canonical URL -->' . "\n";
+            echo '<link rel="canonical" href="' . esc_url( $current_url ) . '" />' . "\n";
         }
     }
     
@@ -123,5 +131,4 @@ NGINX;
     }
 }
 
-// Initialize SEO migration
-new SBP_SEO_Migration();
+// NOTE: Instantiated by Scholar_Book_Publisher::init() — do NOT instantiate here.
