@@ -7,7 +7,7 @@
  * @since 1.2.0
  */
 
-class SBP_Metadata_Generator {
+class SBPP_Metadata_Generator {
     
     public function __construct() {
         // Priority 1 - inject before other plugins
@@ -72,21 +72,21 @@ class SBP_Metadata_Generator {
         global $post;
         
         // Get all metadata
-        $subtitle = get_post_meta($post->ID, '_sbp_book_subtitle', true);
-        $description = get_post_meta($post->ID, '_sbp_book_description', true);
-        $authors = get_post_meta($post->ID, '_sbp_authors', true);
-        $editors = get_post_meta($post->ID, '_sbp_editors', true);
-        $publisher = get_post_meta($post->ID, '_sbp_book_publisher', true);
-        $publisher_city = get_post_meta($post->ID, '_sbp_publisher_city', true);
-        $pub_date = get_post_meta($post->ID, '_sbp_publication_date', true);
-        $isbn = get_post_meta($post->ID, '_sbp_isbn', true);
-        $doi = get_post_meta($post->ID, '_sbp_doi', true);
-        $language = get_post_meta($post->ID, '_sbp_book_language', true);
-        $pages = get_post_meta($post->ID, '_sbp_page_count', true);
-        $access_category = get_post_meta($post->ID, '_sbp_access_category', true);
+        $subtitle = get_post_meta($post->ID, '_sbpp_book_subtitle', true);
+        $description = get_post_meta($post->ID, '_sbpp_book_description', true);
+        $authors = get_post_meta($post->ID, '_sbpp_authors', true);
+        $editors = get_post_meta($post->ID, '_sbpp_editors', true);
+        $publisher = get_post_meta($post->ID, '_sbpp_book_publisher', true);
+        $publisher_city = get_post_meta($post->ID, '_sbpp_publisher_city', true);
+        $pub_date = get_post_meta($post->ID, '_sbpp_publication_date', true);
+        $isbn = get_post_meta($post->ID, '_sbpp_isbn', true);
+        $doi = get_post_meta($post->ID, '_sbpp_doi', true);
+        $language = get_post_meta($post->ID, '_sbpp_book_language', true);
+        $pages = get_post_meta($post->ID, '_sbpp_page_count', true);
+        $access_category = get_post_meta($post->ID, '_sbpp_access_category', true);
         
         // Cover image
-        $cover_id = get_post_meta($post->ID, '_sbp_book_cover', true);
+        $cover_id = get_post_meta($post->ID, '_sbpp_book_cover', true);
         $cover_url = $cover_id ? wp_get_attachment_url($cover_id) : '';
         if (!$cover_url && has_post_thumbnail()) {
             $cover_url = get_the_post_thumbnail_url($post->ID, 'large');
@@ -94,14 +94,14 @@ class SBP_Metadata_Generator {
         
         // PDF URL (only for open access)
         $pdf_url = '';
-        $pdf_available = get_post_meta($post->ID, '_sbp_pdf_available', true);
+        $pdf_available = get_post_meta($post->ID, '_sbpp_pdf_available', true);
         if ($pdf_available && $access_category === 'open') {
-            $pdf_source = get_post_meta($post->ID, '_sbp_pdf_source', true);
+            $pdf_source = get_post_meta($post->ID, '_sbpp_pdf_source', true);
             if ($pdf_source === 'wordpress') {
-                $pdf_id = get_post_meta($post->ID, '_sbp_pdf_wordpress_id', true);
+                $pdf_id = get_post_meta($post->ID, '_sbpp_pdf_wordpress_id', true);
                 if ($pdf_id) $pdf_url = wp_get_attachment_url($pdf_id);
             } elseif ($pdf_source === 'gdrive') {
-                $pdf_gdrive_id = get_post_meta($post->ID, '_sbp_pdf_gdrive_id', true);
+                $pdf_gdrive_id = get_post_meta($post->ID, '_sbpp_pdf_gdrive_id', true);
                 if ($pdf_gdrive_id) $pdf_url = 'https://drive.google.com/uc?export=download&id=' . $pdf_gdrive_id;
             }
         }
@@ -387,7 +387,7 @@ class SBP_Metadata_Generator {
         }
         
         // Aggregate rating (if available)
-        $views = get_post_meta($post->ID, '_sbp_view_count', true);
+        $views = get_post_meta($post->ID, '_sbpp_view_count', true);
         if ($views && $views > 0) {
             $schema['interactionStatistic'] = array(
                 '@type' => 'InteractionCounter',
@@ -405,7 +405,7 @@ class SBP_Metadata_Generator {
         // ============================================
         echo "\n<!-- Additional Crawler Optimization -->\n";
         // NOTE: <link rel="canonical"> is intentionally omitted here.
-        // SBP_SEO_Migration::add_canonical_meta() outputs the canonical at wp_head
+        // SBPP_SEO_Migration::add_canonical_meta() outputs the canonical at wp_head
         // priority 1 for all book/chapter/archive pages. Outputting it twice would
         // send conflicting signals to Googlebot and other crawlers.
         if ($pdf_url) {
@@ -421,23 +421,23 @@ class SBP_Metadata_Generator {
     private function generate_chapter_metadata() {
         global $post;
         
-        $parent_book_id = get_post_meta($post->ID, '_sbp_parent_book', true);
+        $parent_book_id = get_post_meta($post->ID, '_sbpp_parent_book', true);
         if (!$parent_book_id) return;
         
         $book = get_post($parent_book_id);
         if (!$book) return;
         
         // Get chapter-specific data
-        $chapter_number = get_post_meta($post->ID, '_sbp_chapter_number', true);
-        $authors = get_post_meta($post->ID, '_sbp_chapter_authors', true);
-        $start_page = get_post_meta($post->ID, '_sbp_chapter_start_page', true);
-        $end_page = get_post_meta($post->ID, '_sbp_chapter_end_page', true);
+        $chapter_number = get_post_meta($post->ID, '_sbpp_chapter_number', true);
+        $authors = get_post_meta($post->ID, '_sbpp_chapter_authors', true);
+        $start_page = get_post_meta($post->ID, '_sbpp_chapter_start_page', true);
+        $end_page = get_post_meta($post->ID, '_sbpp_chapter_end_page', true);
         
         // Get book data
-        $book_authors = get_post_meta($parent_book_id, '_sbp_authors', true);
-        $publisher = get_post_meta($parent_book_id, '_sbp_book_publisher', true);
-        $pub_date = get_post_meta($parent_book_id, '_sbp_publication_date', true);
-        $isbn = get_post_meta($parent_book_id, '_sbp_isbn', true);
+        $book_authors = get_post_meta($parent_book_id, '_sbpp_authors', true);
+        $publisher = get_post_meta($parent_book_id, '_sbpp_book_publisher', true);
+        $pub_date = get_post_meta($parent_book_id, '_sbpp_publication_date', true);
+        $isbn = get_post_meta($parent_book_id, '_sbpp_isbn', true);
         
         echo "\n<!-- Chapter Metadata (Part of Book) -->\n";
         

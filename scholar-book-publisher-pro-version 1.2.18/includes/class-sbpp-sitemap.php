@@ -7,7 +7,7 @@
  * @since 1.2.5
  */
 
-class SBP_Sitemap_Generator {
+class SBPP_Sitemap_Generator {
     
     public function __construct() {
         add_action('init', array($this, 'add_sitemap_rewrite'), 10);
@@ -19,7 +19,7 @@ class SBP_Sitemap_Generator {
      * Add query vars
      */
     public function add_query_vars($vars) {
-        $vars[] = 'sbp_sitemap';
+        $vars[] = 'sbpp_sitemap';
         return $vars;
     }
     
@@ -29,10 +29,10 @@ class SBP_Sitemap_Generator {
     public function add_sitemap_rewrite() {
         add_rewrite_rule(
             '^books-sitemap\.xml$',
-            'index.php?sbp_sitemap=books',
+            'index.php?sbpp_sitemap=books',
             'top'
         );
-        add_rewrite_tag('%sbp_sitemap%', '([^&]+)');
+        add_rewrite_tag('%sbpp_sitemap%', '([^&]+)');
     }
     
     /**
@@ -40,7 +40,7 @@ class SBP_Sitemap_Generator {
      */
     public function serve_sitemap() {
         // Method 1: Check query var (rewrite rule)
-        $sitemap_type = get_query_var('sbp_sitemap');
+        $sitemap_type = get_query_var('sbpp_sitemap');
         
         if ($sitemap_type === 'books') {
             $this->output_sitemap();
@@ -160,7 +160,7 @@ class SBP_Sitemap_Generator {
                     'posts_per_page' => -1,
                     'meta_query'     => array(
                         array(
-                            'key'     => '_sbp_parent_book',
+                            'key'     => '_sbpp_parent_book',
                             'value'   => $book->ID,
                             'compare' => '=',
                         ),

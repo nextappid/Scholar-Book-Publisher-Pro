@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-class SBP_Crawler_Optimizer {
+class SBPP_Crawler_Optimizer {
     
     public function __construct() {
         add_filter('robots_txt', array($this, 'optimize_robots_txt'), 10, 2);

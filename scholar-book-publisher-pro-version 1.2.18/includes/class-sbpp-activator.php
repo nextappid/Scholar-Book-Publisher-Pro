@@ -6,7 +6,7 @@
  * @since 1.0.0
  */
 
-class SBP_Activator {
+class SBPP_Activator {
     
     /**
      * Activate the plugin
@@ -15,16 +15,16 @@ class SBP_Activator {
      */
     public static function activate() {
         // Register post types (needed before flushing rewrite rules)
-        $post_types = new SBP_Post_Types();
+        $post_types = new SBPP_Post_Types();
         $post_types->register_post_types();
         
         // Add sitemap rewrite rules
         add_rewrite_rule(
             '^books-sitemap\.xml$',
-            'index.php?sbp_sitemap=books',
+            'index.php?sbpp_sitemap=books',
             'top'
         );
-        add_rewrite_tag('%sbp_sitemap%', '([^&]+)');
+        add_rewrite_tag('%sbpp_sitemap%', '([^&]+)');
         
         // Create default settings
         self::create_default_settings();
@@ -39,7 +39,7 @@ class SBP_Activator {
         self::add_htaccess_rules();
         
         // Trigger action for other components
-        do_action('sbp_plugin_activated');
+        do_action('sbpp_plugin_activated');
     }
     
     /**
@@ -55,11 +55,11 @@ class SBP_Activator {
             'enable_schema_org' => true,
             'pdf_max_size' => 5, // MB
             'require_doi' => false,
-            'version' => SBP_VERSION
+            'version' => SBPP_VERSION
         );
         
-        if (!get_option('sbp_settings')) {
-            add_option('sbp_settings', $default_settings);
+        if (!get_option('sbpp_settings')) {
+            add_option('sbpp_settings', $default_settings);
         }
     }
     

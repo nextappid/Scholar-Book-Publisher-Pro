@@ -7,7 +7,7 @@
  * @since 1.2.0
  */
 
-class SBP_SEO_Migration {
+class SBPP_SEO_Migration {
     
     /**
      * Constructor

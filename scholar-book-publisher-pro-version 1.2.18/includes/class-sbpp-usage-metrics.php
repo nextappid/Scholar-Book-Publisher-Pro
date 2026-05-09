@@ -7,7 +7,7 @@
  * @since 1.0.0
  */
 
-class SBP_Usage_Metrics {
+class SBPP_Usage_Metrics {
     
     public function __construct() {
         add_action('wp', array($this, 'track_page_view'));
@@ -23,12 +23,12 @@ class SBP_Usage_Metrics {
             
             // Only count unique views (not bots, not admin)
             if (!is_admin() && !$this->is_bot()) {
-                $views = (int) get_post_meta($post->ID, '_sbp_views_count', true);
-                update_post_meta($post->ID, '_sbp_views_count', $views + 1);
+                $views = (int) get_post_meta($post->ID, '_sbpp_views_count', true);
+                update_post_meta($post->ID, '_sbpp_views_count', $views + 1);
                 
                 // Track daily views for analytics
                 $today = date('Y-m-d');
-                $daily_key = '_sbp_views_' . $today;
+                $daily_key = '_sbpp_views_' . $today;
                 $daily_views = (int) get_post_meta($post->ID, $daily_key, true);
                 update_post_meta($post->ID, $daily_key, $daily_views + 1);
             }
@@ -40,23 +40,23 @@ class SBP_Usage_Metrics {
      */
     public function track_pdf_download() {
         // Check if this is a download request
-        if (isset($_GET['sbp_download']) && isset($_GET['book_id'])) {
+        if (isset($_GET['sbpp_download']) && isset($_GET['book_id'])) {
             $book_id = intval($_GET['book_id']);
             
             if ($book_id && get_post_type($book_id) === 'scholar_book') {
                 // Increment download counter
-                $downloads = (int) get_post_meta($book_id, '_sbp_downloads_count', true);
-                update_post_meta($book_id, '_sbp_downloads_count', $downloads + 1);
+                $downloads = (int) get_post_meta($book_id, '_sbpp_downloads_count', true);
+                update_post_meta($book_id, '_sbpp_downloads_count', $downloads + 1);
                 
                 // Get PDF URL and redirect
-                $pdf_source = get_post_meta($book_id, '_sbp_pdf_source', true);
+                $pdf_source = get_post_meta($book_id, '_sbpp_pdf_source', true);
                 $pdf_url = '';
                 
                 if ($pdf_source === 'wordpress') {
-                    $pdf_id = get_post_meta($book_id, '_sbp_pdf_wordpress_id', true);
+                    $pdf_id = get_post_meta($book_id, '_sbpp_pdf_wordpress_id', true);
                     if ($pdf_id) $pdf_url = wp_get_attachment_url($pdf_id);
                 } elseif ($pdf_source === 'gdrive') {
-                    $pdf_gdrive_id = get_post_meta($book_id, '_sbp_pdf_gdrive_id', true);
+                    $pdf_gdrive_id = get_post_meta($book_id, '_sbpp_pdf_gdrive_id', true);
                     if ($pdf_gdrive_id) $pdf_url = 'https://drive.google.com/uc?export=download&id=' . $pdf_gdrive_id;
                 }
                 
@@ -73,8 +73,8 @@ class SBP_Usage_Metrics {
      */
     public static function get_metrics($post_id) {
         return array(
-            'views' => (int) get_post_meta($post_id, '_sbp_views_count', true),
-            'downloads' => (int) get_post_meta($post_id, '_sbp_downloads_count', true)
+            'views' => (int) get_post_meta($post_id, '_sbpp_views_count', true),
+            'downloads' => (int) get_post_meta($post_id, '_sbpp_downloads_count', true)
         );
     }
     
@@ -83,7 +83,7 @@ class SBP_Usage_Metrics {
      */
     public static function update_citations($post_id, $count) {
         // Deprecated - citations removed from v1.1
-        delete_post_meta($post_id, '_sbp_citations_count');
+        delete_post_meta($post_id, '_sbpp_citations_count');
     }
     
     /**
@@ -107,7 +107,7 @@ class SBP_Usage_Metrics {
      */
     public static function get_tracked_download_url($post_id) {
         return add_query_arg(array(
-            'sbp_download' => '1',
+            'sbpp_download' => '1',
             'book_id' => $post_id
         ), home_url('/'));
     }

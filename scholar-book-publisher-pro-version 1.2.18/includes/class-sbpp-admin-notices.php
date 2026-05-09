@@ -6,16 +6,20 @@
  * @since 1.0.0
  */
 
-class SBP_Admin_Notices {
+class SBPP_Admin_Notices {
     
     public function __construct() {
         add_action('admin_notices', array($this, 'display_notices'));
     }
     
     public function display_notices() {
+        if (!current_user_can('manage_options')) {
+            return;
+        }
+        
         // Check if we need to show sitemap setup notice (v1.2.5+)
-        $sitemap_notice_dismissed = get_option('sbp_sitemap_notice_dismissed', false);
-        $current_version = get_option('sbp_version', '1.0.0');
+        $sitemap_notice_dismissed = get_option('sbpp_sitemap_notice_dismissed', false);
+        $current_version = get_option('sbpp_version', '1.0.0');
         
         if (!$sitemap_notice_dismissed && version_compare($current_version, '1.2.5', '>=')) {
             ?>
@@ -38,16 +42,16 @@ class SBP_Admin_Notices {
                     <li>Submit</li>
                 </ol>
                 
-                <button type="button" class="button" onclick="sbpDismissSitemapNotice()">Dismiss this notice</button>
+                <button type="button" class="button" onclick="sbppDismissSitemapNotice()">Dismiss this notice</button>
             </div>
             
             <script>
-            function sbpDismissSitemapNotice() {
+            function sbppDismissSitemapNotice() {
                 document.getElementById('sbp-sitemap-notice').style.display = 'none';
                 fetch('<?php echo admin_url('admin-ajax.php'); ?>', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                    body: 'action=sbp_dismiss_sitemap_notice&nonce=<?php echo wp_create_nonce('sbp_dismiss_sitemap'); ?>'
+                    body: 'action=sbpp_dismiss_sitemap_notice&nonce=<?php echo wp_create_nonce('sbpp_dismiss_sitemap'); ?>'
                 });
             }
             </script>
@@ -55,7 +59,7 @@ class SBP_Admin_Notices {
         }
         
         // Check if we need to show URL structure update notice
-        $dismissed = get_option('sbp_url_structure_notice_dismissed', false);
+        $dismissed = get_option('sbpp_url_structure_notice_dismissed', false);
         
         // Show notice if upgrading from version < 1.2.0
         if (!$dismissed && version_compare($current_version, '1.2.0', '<')) {
@@ -87,13 +91,13 @@ class SBP_Admin_Notices {
                         
                         <div id="sbp-htaccess-rules" style="display:none; margin-top: 10px;">
                             <h4>Apache / .htaccess Rules:</h4>
-                            <textarea readonly style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"><?php echo esc_textarea(SBP_SEO_Migration::get_htaccess_rules()); ?></textarea>
+                            <textarea readonly style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"><?php echo esc_textarea(SBPP_SEO_Migration::get_htaccess_rules()); ?></textarea>
                             <button type="button" class="button" onclick="navigator.clipboard.writeText(document.querySelector('#sbp-htaccess-rules textarea').value); alert('Copied to clipboard!')">Copy to Clipboard</button>
                         </div>
                         
                         <div id="sbp-nginx-rules" style="display:none; margin-top: 10px;">
                             <h4>Nginx Rules:</h4>
-                            <textarea readonly style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"><?php echo esc_textarea(SBP_SEO_Migration::get_nginx_rules()); ?></textarea>
+                            <textarea readonly style="width: 100%; height: 200px; font-family: monospace; font-size: 12px;"><?php echo esc_textarea(SBPP_SEO_Migration::get_nginx_rules()); ?></textarea>
                             <button type="button" class="button" onclick="navigator.clipboard.writeText(document.querySelector('#sbp-nginx-rules textarea').value); alert('Copied to clipboard!')">Copy to Clipboard</button>
                         </div>
                         
@@ -105,8 +109,8 @@ class SBP_Admin_Notices {
             jQuery(document).ready(function($) {
                 $('#sbp-url-notice').on('click', '.notice-dismiss', function() {
                     $.post(ajaxurl, {
-                        action: 'sbp_dismiss_url_notice',
-                        nonce: '<?php echo wp_create_nonce('sbp_dismiss_notice'); ?>'
+                        action: 'sbpp_dismiss_url_notice',
+                        nonce: '<?php echo wp_create_nonce('sbpp_dismiss_notice'); ?>'
                     });
                 });
             });
@@ -115,8 +119,8 @@ class SBP_Admin_Notices {
         }
         
         // Update version option
-        if ($current_version !== SBP_VERSION) {
-            update_option('sbp_version', SBP_VERSION);
+        if ($current_version !== SBPP_VERSION) {
+            update_option('sbpp_version', SBPP_VERSION);
         }
     }
 }
