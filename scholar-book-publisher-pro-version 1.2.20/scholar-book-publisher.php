@@ -3,7 +3,7 @@
  * Plugin Name: Scholar Book Publisher Pro
  * Plugin URI: https://github.com/nextmedia/scholar-book-publisher-pro
  * Description: Complete academic book publishing system optimized for Google Scholar indexing. Features subtitle support, teal theme, dark/light mode, WYSIWYG editor, advanced filters, and custom SVG branding. Supports dual PDF schema (WordPress upload or Google Drive link), complete metadata management, and automatic crawler optimization.
- * Version: 1.2.19
+ * Version: 1.2.20
  * Author: Nextmedia
  * Author URI: https://nextmedia.id
  * License: GPL v2 or later
@@ -53,7 +53,7 @@ if (version_compare($wp_version, '5.8', '<')) {
 }
 
 // Define plugin constants
-define('SBPP_VERSION', '1.2.19');
+define('SBPP_VERSION', '1.2.20');
 define('SBPP_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SBPP_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('SBPP_PLUGIN_BASENAME', plugin_basename(__FILE__));

@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.20] - 2026-05-17
+### Fixed
+- Fixed critical error caused by incorrect taxonomy name `scholar_category` in `wp_get_post_terms` causing fatal crashes on single book pages and related book queries.
+- Added `is_wp_error()` validation checks across template loops to ensure safe processing when fetching categories and metadata.
+
 ## [1.2.19] - 2026-05-09
 ### Fixed
 - Fixed fatal error related to missing function exists checks for plugin activation/deactivation hooks.

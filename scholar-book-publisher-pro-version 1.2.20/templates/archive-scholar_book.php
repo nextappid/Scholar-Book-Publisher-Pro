@@ -1167,6 +1167,9 @@ var sbpp_ajax = {
                         
                         // Categories for filtering
                         $categories = wp_get_post_terms(get_the_ID(), 'book_category', array('fields' => 'slugs'));
+                        if (is_wp_error($categories) || !is_array($categories)) {
+                            $categories = array();
+                        }
                     ?>
                     
                     <article class="scholar-book-card" 

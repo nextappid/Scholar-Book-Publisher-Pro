@@ -1446,7 +1446,7 @@ get_header(); ?>
             <!-- Related Books Carousel -->
             <?php
             // Get current book's categories
-            $current_cats = wp_get_post_terms(get_the_ID(), 'scholar_category', array('fields' => 'ids'));
+            $current_cats = wp_get_post_terms(get_the_ID(), 'book_category', array('fields' => 'ids'));
             
             // Build query args - prioritize same category
             $related_args = array(
@@ -1456,10 +1456,10 @@ get_header(); ?>
                 'orderby' => 'rand'
             );
             
-            if (!empty($current_cats)) {
+            if (!empty($current_cats) && !is_wp_error($current_cats)) {
                 $related_args['tax_query'] = array(
                     array(
-                        'taxonomy' => 'scholar_category',
+                        'taxonomy' => 'book_category',
                         'field' => 'term_id',
                         'terms' => $current_cats
                     )

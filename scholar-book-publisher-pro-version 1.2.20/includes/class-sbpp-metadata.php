@@ -263,7 +263,7 @@ class SBPP_Metadata_Generator {
         
         // Keywords (helpful for AI)
         $categories = wp_get_post_terms($post->ID, 'book_category', array('fields' => 'names'));
-        if (!empty($categories)) {
+        if (!empty($categories) && !is_wp_error($categories)) {
             echo '<meta name="keywords" content="' . esc_attr(implode(', ', $categories) . ', ' . $full_title) . '">' . "\n";
         }
         
@@ -376,7 +376,7 @@ class SBPP_Metadata_Generator {
         
         // Categories/subjects
         $categories = wp_get_post_terms($post->ID, 'book_category', array('fields' => 'names'));
-        if (!empty($categories)) {
+        if (!empty($categories) && !is_wp_error($categories)) {
             $schema['about'] = array();
             foreach ($categories as $cat) {
                 $schema['about'][] = array(
