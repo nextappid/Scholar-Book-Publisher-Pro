@@ -1,0 +1,27 @@
+/**
+ * Scholar Book Publisher Pro - Frontend Styles
+ * 
+ * This file contains minimal fallback styles.
+ * Main styles are embedded in template files.
+ * 
+ * @package Scholar_Book_Publisher
+ * @version 1.0.0
+ */
+
+/* Fallback styles if templates are not loaded */
+.scholar-book-container,
+.scholar-archive-container,
+.scholar-chapter-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Basic responsive */
+@media (max-width: 768px) {
+    .scholar-book-container,
+    .scholar-archive-container,
+    .scholar-chapter-container {
+        padding: 1rem;
+    }
+}
