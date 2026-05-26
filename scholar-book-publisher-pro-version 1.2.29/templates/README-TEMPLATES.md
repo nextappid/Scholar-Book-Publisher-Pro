@@ -639,7 +639,7 @@ You are free to:
 
 ---
 
-**Version:** 1.0.0  
+**Version:** 1.2.29  
 **Last Updated:** February 2026  
 **Compatible With:** Scholar Book Publisher Pro 1.0.0+
 

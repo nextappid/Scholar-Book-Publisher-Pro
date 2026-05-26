@@ -276,7 +276,7 @@ You are free to:
 
 ## 📊 Stats
 
-- **Version:** 1.0.0
+- **Version:** 1.2.29
 - **Last Updated:** February 2026
 - **Downloads:** [Count from WordPress.org]
 - **Active Installs:** [Count from WordPress.org]

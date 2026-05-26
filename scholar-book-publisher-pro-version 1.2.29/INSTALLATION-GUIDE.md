@@ -1055,7 +1055,7 @@ This is an open-source project. Contributions welcome:
 
 ---
 
-**Version:** 1.0.0  
+**Version:** 1.2.29  
 **Last Updated:** February 2026  
 **Plugin:** Scholar Book Publisher Pro
 

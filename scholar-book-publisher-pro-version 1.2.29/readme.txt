@@ -4,7 +4,7 @@ Tags: google scholar, academic publishing, books, metadata, isbn, doi, pdf
 Requires at least: 5.8
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 1.2.27
+Stable tag: 1.2.29
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
